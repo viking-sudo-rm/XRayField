@@ -6,9 +6,12 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 
+import snorri.data.DataManager;
 import snorri.math.Mathv;
 
 public class XRayListener implements Listener {
@@ -46,8 +49,19 @@ public class XRayListener implements Listener {
 		
 		double theta = Mathv.getAngleBetween(direction, netForce);
 		
-		XRayField.log("" + 180 / Math.PI * theta);
+		//player.sendMessage("" + 180 / Math.PI * theta);
+		DataManager.log(player,  theta);
 		
+	}
+	
+	@EventHandler
+	public void onLogin(PlayerLoginEvent event) {
+		DataManager.addPlayer(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		DataManager.removePlayer(event.getPlayer());
 	}
 	
 }
