@@ -29,7 +29,8 @@ public class XRayListener implements Listener {
 		Player player = event.getPlayer();
 		World world = player.getWorld();
 		Location loc = event.getFrom();
-		Vector direction = loc.getDirection();
+		
+		//Vector direction = loc.getDirection();
 		
 		Vector netForce = new Vector(0, 0, 0);
 		for (int y = loc.getBlockY() - RANGE; y < loc.getBlockY() + RANGE && y < CEILING; y++) {
@@ -47,10 +48,13 @@ public class XRayListener implements Listener {
 		if (netForce.equals(new Vector(0, 0, 0)))
 			return;
 		
-		double theta = Mathv.getAngleBetween(direction, netForce);
+		DataManager.updateStats(player, Mathv.getWorkTerm(netForce, player.getVelocity()));
 		
+		//double theta = Mathv.getAngleBetween(direction, netForce);
 		//player.sendMessage("" + 180 / Math.PI * theta);
-		DataManager.log(player,  theta);
+		
+		DataManager.logWork(player);
+		DataManager.writeToDisk(player);
 		
 	}
 	

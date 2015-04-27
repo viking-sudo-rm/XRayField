@@ -13,5 +13,9 @@ public class Mathv {
 	public static double getAngleBetween(Vector v1, Vector v2) {
 		return Math.acos(v1.dot(v2) / (v1.length() * v2.length()));
 	}
+	
+	public static double getWorkTerm(Vector force, Vector motion) {
+		return force.dot(motion);
+	}
 
 }

@@ -13,23 +13,19 @@ import snorri.main.XRayField;
 
 //TODO: add "comments" to log file with time stamps?
 
-//when performing tests, create a new dataset and load values from logs/existing data
+//TODO: make this extend an arraylist?
 
-public class DataSet {
+public class DataSet extends ArrayList<Double> {
 	
-	private ArrayList<Double> data;
-	
-	public DataSet() {
-		data = new ArrayList<Double>();
-	}
-	
+	private static final long serialVersionUID = 1L;
+
 	public void addPoint(Double val) {
-		data.add(val);
+		add(val);
 	}
 	
 	public void load(DataSet other) {
-		for (Double val : other.data)
-			data.add(val);
+		for (Double val : other)
+			add(val);
 	}
 	
 	public void loadLog(Player player) throws IOException {
@@ -40,7 +36,7 @@ public class DataSet {
 			BufferedReader fh = new BufferedReader(new FileReader(log));
 			
 			while (fh.ready())
-				data.add(Double.parseDouble(fh.readLine()));
+				add(Double.parseDouble(fh.readLine()));
 			fh.close();
 			
 		}
@@ -57,7 +53,7 @@ public class DataSet {
 			log.createNewFile();
 				
 		FileWriter fh = new FileWriter(log, true);
-		for (Double angle : data)
+		for (Double angle : this)
 			fh.write(angle + "\n");
 		fh.close();
 		
