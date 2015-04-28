@@ -1,9 +1,9 @@
 name: XRayField
-version: 0.1.1
+version: 0.5.1
 author: lambdaviking
 description: Prevents x-raying with some physics and math
 main: snorri.main.XRayField
 commands:
   test:
-    description: Checks probability that players are cheating
+    description: [UNIMPLEMENTED] Checks probability that players are cheating
     usage: /test [player1] [player2] ..

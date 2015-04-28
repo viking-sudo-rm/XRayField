@@ -24,18 +24,18 @@ public class DataManager {
 		XRayField.log(player.getDisplayName() + " is now being tracked");
 		
 		workData.put(player, new DataSet());
+		stats.put(player, new StatTracker());
 		
-		DataSet all = new DataSet();
 		double initialWork = 0;
 		try {
+			DataSet all = new DataSet();
 			all.loadLog(player);
 			initialWork = all.get(all.size() - 1);
+			stats.get(player).setWork(initialWork);
 		} catch (Exception e) { 
 			XRayField.log("No mining data has been recorded for " + player.getDisplayName() + " yet");
 		}
-		
-		stats.put(player, new StatTracker(initialWork));
-				
+						
 	}
 	
 	public static void removePlayer(Player player) {

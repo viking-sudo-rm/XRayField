@@ -5,9 +5,12 @@ public class StatTracker {
 	private double work;
 	private int time;
 	
-	public StatTracker(double initialWork) {
-		work = initialWork;
+	public StatTracker() {
 		time = 0;
+	}
+	
+	public void setWork(double initialWork) {
+		work = initialWork;
 	}
 	
 	public void doWork(double workTerm) {
