@@ -10,13 +10,11 @@ import snorri.main.XRayField;
 public class DataManager {
 
 	private static HashMap<Player, DataSet> workData;
-	private static HashMap<Player, StatTracker> stats;
-	
-	//save stats
-	
+	//private static HashMap<Player, StatTracker> stats;
+		
 	static {
 		workData = new HashMap<Player, DataSet>();
-		stats = new HashMap<Player, StatTracker>();
+		//stats = new HashMap<Player, StatTracker>();
 	}
 	
 	public static void addPlayer(Player player) {
@@ -24,9 +22,9 @@ public class DataManager {
 		XRayField.log(player.getDisplayName() + " is now being tracked");
 		
 		workData.put(player, new DataSet());
-		stats.put(player, new StatTracker());
+		//stats.put(player, new StatTracker());
 		
-		double initialWork = 0;
+		/*double initialWork = 0;
 		try {
 			DataSet all = new DataSet();
 			all.loadLog(player);
@@ -34,7 +32,7 @@ public class DataManager {
 			stats.get(player).setWork(initialWork);
 		} catch (Exception e) { 
 			XRayField.log("No mining data has been recorded for " + player.getDisplayName() + " yet");
-		}
+		}*/
 						
 	}
 	
@@ -48,7 +46,7 @@ public class DataManager {
 		}
 		
 		workData.remove(player);
-		stats.remove(player);
+		//stats.remove(player);
 		
 	}
 	
@@ -67,18 +65,18 @@ public class DataManager {
 	}
 	
 	public static void updateStats(Player player, double workTerm) {
-		stats.get(player).doWork(workTerm);
-		stats.get(player).tick();
+		//stats.get(player).doWork(workTerm);
+		//stats.get(player).tick();
 		workData.get(player).addPoint(workTerm);
 	}
 	
-	public static double getPower(Player player) {
+	/*public static double getPower(Player player) {
 		return stats.get(player).getPower();
 	}
 	
 	public static int getTime(Player player) {
 		return stats.get(player).getTime();
-	}
+	}*/
 	
 	public static DataSet getCurrentSession(Player player) {
 		return workData.get(player);
@@ -86,7 +84,8 @@ public class DataManager {
 	
 	public static DataSet getAllData(Player player) {
 		DataSet data = new DataSet();
-		data.load(workData.get(player));
+		if (workData.keySet().contains(player))
+			data.load(workData.get(player));
 		try {
 			data.loadLog(player);
 		} catch (IOException e) { }

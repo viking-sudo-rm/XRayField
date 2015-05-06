@@ -65,5 +65,12 @@ public class DataSet extends ArrayList<Double> {
 			sum += d;
 		return sum / size();
 	}
+	
+	public double sd() {
+		double mu = mean(), n = size(), sum = 0;
+		for (Double d : this)
+			sum += (d - mu) * (d - mu);
+		return Math.sqrt(sum / (n - 1));
+	}
 
 }
