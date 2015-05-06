@@ -54,6 +54,8 @@ public class DataManager {
 	
 	public static void writeToDisk(Player player) {
 		
+		//TODO: test if getting rid of this fixes the ratio problem
+		
 		if (workData.get(player).size() < 1024)
 			return;
 		
@@ -64,17 +66,22 @@ public class DataManager {
 		
 	}
 	
-	public static void logWork(Player player) {
-		workData.get(player).addPoint(stats.get(player).getWork());
-	}
-	
 	public static void updateStats(Player player, double workTerm) {
 		stats.get(player).doWork(workTerm);
 		stats.get(player).tick();
+		workData.get(player).addPoint(workTerm);
 	}
 	
 	public static double getPower(Player player) {
 		return stats.get(player).getPower();
+	}
+	
+	public static int getTime(Player player) {
+		return stats.get(player).getTime();
+	}
+	
+	public static DataSet getCurrentSession(Player player) {
+		return workData.get(player);
 	}
 	
 	public static DataSet getAllData(Player player) {

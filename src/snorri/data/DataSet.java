@@ -58,5 +58,12 @@ public class DataSet extends ArrayList<Double> {
 		fh.close();
 		
 	}
+	
+	public double mean() {
+		double sum = 0;
+		for (Double d : this)
+			sum += d;
+		return sum / size();
+	}
 
 }

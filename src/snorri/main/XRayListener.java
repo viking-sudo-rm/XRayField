@@ -52,9 +52,7 @@ public class XRayListener implements Listener {
 		
 		//double theta = Mathv.getAngleBetween(direction, netForce);
 		//player.sendMessage("" + 180 / Math.PI * theta);
-		
-		DataManager.logWork(player);
-		DataManager.writeToDisk(player);
+		//DataManager.writeToDisk(player);
 		
 	}
 	
