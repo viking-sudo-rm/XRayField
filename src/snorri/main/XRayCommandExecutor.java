@@ -3,6 +3,7 @@ package snorri.main;
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -44,12 +45,30 @@ public class XRayCommandExecutor implements CommandExecutor {
 		String flags = getFlags(args);
 		args = getArgs(args);
 		if (cmd.getName().equals("xray")) {
-			Player player = XRayField.getPlayer(args[1]);
+			OfflinePlayer player = XRayField.getPlayer(args[1]);
+			if (player == null)
+				return false;
 			if (args[0].equals("stats")) {
-				DataSet data = flags.contains("s") ? DataManager.getCurrentSession(player) : DataManager.getAllData(player);
+				DataSet data;
+				String playerName, mode;
+				if (! player.isOnline() || flags.contains("a")) {
+					data = DataManager.getOfflineData(player);
+					playerName = player.getName();
+					mode = "offline";
+				}
+				else if (flags.contains("s")) {
+					data = DataManager.getCurrentSession((Player) player);
+					playerName = ((Player) player).getDisplayName();
+					mode = "session";
+				}
+				else {
+					data = DataManager.getAllData((Player) player);
+					playerName = ((Player) player).getDisplayName();
+					mode = "all-time";
+				}
 				sender.sendMessage(ChatColor.DARK_GREEN + "Power Statistics: ");
-				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + player.getDisplayName());
-				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + (flags.contains("s") ? "session" : "all-time"));
+				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
+				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + mode);
 				sender.sendMessage(ChatColor.GOLD + "  Mean: " + ChatColor.RESET + data.mean());
 				sender.sendMessage(ChatColor.GOLD + "  SD: " + ChatColor.RESET + data.sd());
 				sender.sendMessage(ChatColor.GOLD + "  Sample: " + ChatColor.RESET + data.size());

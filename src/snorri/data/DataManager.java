@@ -3,6 +3,7 @@ package snorri.data;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import snorri.main.XRayField;
@@ -82,10 +83,20 @@ public class DataManager {
 		return workData.get(player);
 	}
 	
+	public static DataSet getOfflineData(OfflinePlayer player) {
+		DataSet data = new DataSet();
+		try {
+			data.loadLog(player);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return data;
+	}
+	
 	public static DataSet getAllData(Player player) {
 		DataSet data = new DataSet();
 		if (workData.keySet().contains(player))
-			data.load(workData.get(player));
+			data.load(getCurrentSession(player));
 		try {
 			data.loadLog(player);
 		} catch (IOException e) { }

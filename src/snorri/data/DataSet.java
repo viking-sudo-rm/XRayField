@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import snorri.main.XRayField;
@@ -28,7 +29,7 @@ public class DataSet extends ArrayList<Double> {
 			add(val);
 	}
 	
-	public void loadLog(Player player) throws IOException {
+	public void loadLog(OfflinePlayer player) throws IOException {
 		File log = new File(XRayField.getFolder().getAbsolutePath() + "/log/" + player.getUniqueId().toString() + ".csv");
 		
 		if (log.exists()) {

@@ -3,7 +3,7 @@ package snorri.main;
 import java.io.File;
 import java.util.logging.Logger;
 
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class XRayField extends JavaPlugin {
@@ -38,8 +38,8 @@ public class XRayField extends JavaPlugin {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static Player getPlayer(String username) {
-		return plugin.getServer().getPlayer(username);
+	public static OfflinePlayer getPlayer(String username) {
+		return plugin.getServer().getOfflinePlayer(username);
 	}
 
 }
