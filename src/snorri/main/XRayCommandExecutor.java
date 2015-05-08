@@ -81,6 +81,7 @@ public class XRayCommandExecutor implements CommandExecutor {
 				sender.sendMessage(ChatColor.DARK_GREEN + "X-Ray Test: ");
 				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
 				sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.RESET + getPlayerName(XRayField.getPlayer(args[2])));
+				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + data.getMode().toString());
 				
 				double pvalue;
 				try {

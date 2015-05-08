@@ -22,10 +22,7 @@ public class DataManager {
 		
 		XRayField.log(player.getDisplayName() + " is now being tracked");
 		
-		DataSet data = new DataSet();
-		data.setMode(DataMode.SESSION);
-		
-		workData.put(player, data);
+		workData.put(player, new DataSet());
 		//stats.put(player, new StatTracker());
 		
 		/*double initialWork = 0;

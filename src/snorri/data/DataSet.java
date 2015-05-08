@@ -21,7 +21,7 @@ public class DataSet extends ArrayList<Double> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private DataMode mode = null;
+	private DataMode mode = DataMode.SESSION;
 
 	public void addPoint(Double val) {
 		add(val);
