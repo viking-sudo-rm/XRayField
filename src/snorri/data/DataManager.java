@@ -22,7 +22,10 @@ public class DataManager {
 		
 		XRayField.log(player.getDisplayName() + " is now being tracked");
 		
-		workData.put(player, new DataSet());
+		DataSet data = new DataSet();
+		data.setMode(DataMode.SESSION);
+		
+		workData.put(player, data);
 		//stats.put(player, new StatTracker());
 		
 		/*double initialWork = 0;
@@ -85,6 +88,7 @@ public class DataManager {
 	
 	public static DataSet getOfflineData(OfflinePlayer player) {
 		DataSet data = new DataSet();
+		data.setMode(DataMode.OFFLINE);
 		try {
 			data.loadLog(player);
 		} catch (IOException e) {
@@ -95,6 +99,7 @@ public class DataManager {
 	
 	public static DataSet getAllData(Player player) {
 		DataSet data = new DataSet();
+		data.setMode(DataMode.ALL_TIME);
 		if (workData.keySet().contains(player))
 			data.load(getCurrentSession(player));
 		try {

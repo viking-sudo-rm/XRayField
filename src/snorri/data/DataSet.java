@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.math3.stat.inference.TTest;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -19,6 +20,8 @@ import snorri.main.XRayField;
 public class DataSet extends ArrayList<Double> {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private DataMode mode = null;
 
 	public void addPoint(Double val) {
 		add(val);
@@ -72,6 +75,33 @@ public class DataSet extends ArrayList<Double> {
 		for (Double d : this)
 			sum += (d - mu) * (d - mu);
 		return Math.sqrt(sum / (n - 1));
+	}
+	
+	public double tTest(double mu) {
+		TTest test = new TTest();
+		double pvalue = 2 * test.tTest(mu, toPrimitiveArray());
+		return (mean() > mu) ? pvalue : 1;
+	}
+	
+	public double tTest(DataSet other) {
+		TTest test = new TTest();
+		double pvalue = 2 * test.tTest(toPrimitiveArray(), other.toPrimitiveArray());
+		return (mean() - other.mean() > 0) ? pvalue : 1;
+	}
+	
+	private double[] toPrimitiveArray() {
+		double[] result = new double[size()];
+		for (int i = 0; i < size(); i++)
+			result[i] = (double) get(i);
+		return result;
+	}
+
+	public DataMode getMode() {
+		return mode;
+	}
+
+	public void setMode(DataMode mode) {
+		this.mode = mode;
 	}
 
 }

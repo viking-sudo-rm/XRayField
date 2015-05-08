@@ -14,9 +14,8 @@ import snorri.data.DataSet;
 
 public class XRayCommandExecutor implements CommandExecutor {
 
-	// TODO: add a flag to specify current session vs. all data
-	// TODO: have syntax/algorithm the same otherwise
-	// TODO: get rid of stattracker class and just import dataset
+	// TODO: streamline getData method?s?
+	// TODO: move some ttest stuff to the data classes
 
 	private String getFlags(String[] args) {
 		String result = "";
@@ -39,41 +38,62 @@ public class XRayCommandExecutor implements CommandExecutor {
 		}
 		return (String[]) result.toArray(args);
 	}
-
+	
+	private DataSet getData(OfflinePlayer player, String flags) {
+		if (! player.isOnline() || flags.contains("a")) {
+			return DataManager.getOfflineData(player);
+		}
+		if (flags.contains("s")) {
+			return DataManager.getCurrentSession((Player) player);
+		}
+		return DataManager.getAllData((Player) player);
+	}
+	
+	private String getPlayerName(OfflinePlayer player) {
+		return player.isOnline() ? ((Player) player).getDisplayName() : player.getName();
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		String flags = getFlags(args);
 		args = getArgs(args);
 		if (cmd.getName().equals("xray")) {
+			
 			OfflinePlayer player = XRayField.getPlayer(args[1]);
 			if (player == null)
 				return false;
+			
+			
+			DataSet data = getData(player, flags);
+			String playerName = getPlayerName(player);
+			
 			if (args[0].equals("stats")) {
-				DataSet data;
-				String playerName, mode;
-				if (! player.isOnline() || flags.contains("a")) {
-					data = DataManager.getOfflineData(player);
-					playerName = player.getName();
-					mode = "offline";
-				}
-				else if (flags.contains("s")) {
-					data = DataManager.getCurrentSession((Player) player);
-					playerName = ((Player) player).getDisplayName();
-					mode = "session";
-				}
-				else {
-					data = DataManager.getAllData((Player) player);
-					playerName = ((Player) player).getDisplayName();
-					mode = "all-time";
-				}
 				sender.sendMessage(ChatColor.DARK_GREEN + "Power Statistics: ");
 				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
-				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + mode);
+				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + data.getMode().toString());
 				sender.sendMessage(ChatColor.GOLD + "  Mean: " + ChatColor.RESET + data.mean());
 				sender.sendMessage(ChatColor.GOLD + "  SD: " + ChatColor.RESET + data.sd());
 				sender.sendMessage(ChatColor.GOLD + "  Sample: " + ChatColor.RESET + data.size());
 				return true;
 			}
+			
+			if (args[0].equals("test")) {
+				sender.sendMessage(ChatColor.DARK_GREEN + "X-Ray Test: ");
+				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
+				sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.RESET + getPlayerName(XRayField.getPlayer(args[2])));
+				
+				double pvalue;
+				try {
+					pvalue = data.tTest(Double.parseDouble(args[2]));
+				} catch (NumberFormatException e) {
+					pvalue = data.tTest(getData(XRayField.getPlayer(args[2]), flags));
+				}
+				
+				sender.sendMessage(ChatColor.GOLD + "  P-Value: " + ChatColor.RESET + pvalue);
+				sender.sendMessage(ChatColor.GOLD + "  Score: " + ChatColor.RESET + -Math.log10(pvalue));
+				return true;
+			}
+			
 		}
 		return false;
 	}
