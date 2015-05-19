@@ -40,13 +40,13 @@ public class XRayCommandExecutor implements CommandExecutor {
 	}
 	
 	private DataSet getData(OfflinePlayer player, String flags) {
-		if (! player.isOnline() || flags.contains("a")) {
+		if (flags.contains("a")) {
 			return DataManager.getOfflineData(player);
 		}
 		if (flags.contains("s")) {
 			return DataManager.getCurrentSession((Player) player);
 		}
-		return DataManager.getAllData((Player) player);
+		return DataManager.getAllData(player);
 	}
 	
 	private String getPlayerName(OfflinePlayer player) {

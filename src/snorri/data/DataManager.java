@@ -94,11 +94,11 @@ public class DataManager {
 		return data;
 	}
 	
-	public static DataSet getAllData(Player player) {
+	public static DataSet getAllData(OfflinePlayer player) {
 		DataSet data = new DataSet();
 		data.setMode(DataMode.ALL_TIME);
 		if (workData.keySet().contains(player))
-			data.load(getCurrentSession(player));
+			data.load(getCurrentSession(player.getPlayer()));
 		try {
 			data.loadLog(player);
 		} catch (IOException e) { }

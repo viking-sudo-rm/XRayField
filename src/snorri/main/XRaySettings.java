@@ -1,7 +1,6 @@
 package snorri.main;
 
 import java.util.List;
-import java.io.IOException;
 import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
@@ -20,11 +19,14 @@ public class XRaySettings {
 		result.setMode(DataMode.ALL_TIME);
 		for (String id : getTrustedIds()) {
 			OfflinePlayer player = XRayField.getPlayer(UUID.fromString(id));
+			result.load(DataManager.getAllData(player));
+			/*
 			try {
 				result.loadLog(player);
 			} catch (IOException e) { }
 			if (player.isOnline())
 				result.load(DataManager.getCurrentSession(player.getPlayer()));
+			*/
 		}
 		return result;
 	}
