@@ -59,6 +59,9 @@ public class XRayCommandExecutor implements CommandExecutor {
 		args = getArgs(args);
 		if (cmd.getName().equals("xray")) {
 			
+			if (args.length < 2)
+				return false;
+			
 			OfflinePlayer player = XRayField.getPlayer(args[1]);
 			if (player == null)
 				return false;
@@ -80,14 +83,18 @@ public class XRayCommandExecutor implements CommandExecutor {
 			if (args[0].equals("test")) {
 				sender.sendMessage(ChatColor.DARK_GREEN + "X-Ray Test: ");
 				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
-				sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.RESET + getPlayerName(XRayField.getPlayer(args[2])));
+				if (args.length == 2)
+					sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.GRAY + ChatColor.ITALIC + "trusted");
+				else
+					sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.RESET + getPlayerName(XRayField.getPlayer(args[2])));
 				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + data.getMode().toString());
 				
 				double pvalue;
 				try {
 					pvalue = data.tTest(Double.parseDouble(args[2]));
-				} catch (NumberFormatException e) {
-					pvalue = data.tTest(getData(XRayField.getPlayer(args[2]), flags));
+				} catch (Exception e) {
+					DataSet otherData = (args.length == 2) ? XRaySettings.getTrustedData() : getData(XRayField.getPlayer(args[2]), flags);
+					pvalue = data.tTest(otherData);
 				}
 				
 				sender.sendMessage(ChatColor.GOLD + "  P-Value: " + ChatColor.RESET + pvalue);
