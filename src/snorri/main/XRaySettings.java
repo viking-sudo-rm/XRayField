@@ -44,9 +44,20 @@ public class XRaySettings {
 	
 	public static void addTrusted(OfflinePlayer player) {
 		String repr = player.getUniqueId().toString();
-		List<String> players = getTrustedIds();
-		players.add(repr);
-		config.set("trusted", players);
+		List<String> trustedIds = getTrustedIds();
+		trustedIds.add(repr);
+		config.set("trusted", trustedIds);
+	}
+	
+	public static void revokeTrusted(OfflinePlayer player) {
+		List<String> trustedIds = getTrustedIds();
+		for (int i = 0; i < trustedIds.size(); i++) {
+			if (trustedIds.get(i).equals(player.getUniqueId().toString())) {
+				trustedIds.remove(i);
+				i--;
+			}
+		}
+		config.set("trusted", trustedIds);
 	}
 		
 }

@@ -102,6 +102,27 @@ public class XRayCommandExecutor implements CommandExecutor {
 				return true;
 			}
 			
+			if (args[0].equals("trust")) {
+				
+				//TODO: make /xray trust show who is trusted
+				
+				if (XRaySettings.isTrusted(XRayField.getPlayer(playerName))) {
+					
+					if (flags.contains("r")) {
+						XRaySettings.revokeTrusted(player);
+						sender.sendMessage(ChatColor.RESET + playerName + ChatColor.GREEN + " is no longer a trusted miner");
+						return true;
+					}
+						
+					sender.sendMessage(ChatColor.RESET + playerName + ChatColor.GREEN + " is already a trusted miner");
+					sender.sendMessage(ChatColor.GREEN + "Revoke that status with " + ChatColor.RED + "/xray -r trust " + playerName);
+					return true;
+				}
+				XRaySettings.addTrusted(XRayField.getPlayer(playerName));
+				sender.sendMessage(ChatColor.RESET + playerName + ChatColor.GREEN + " is now a trusted miner");
+				return true;
+			}
+			
 		}
 		return false;
 	}

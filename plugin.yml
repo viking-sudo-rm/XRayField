@@ -1,9 +1,9 @@
 name: XRayField
-version: 1.0.1
+version: 1.1.1
 author: lambdaviking
 description: Prevents x-raying with some physics and math
 main: snorri.main.XRayField
 commands:
   xray:
-    description: can be used to test if players are x-raying
-    usage: /xray < stats <player> | test <player> [null] >
+    description: use to see if a player is x-raying
+    usage: /xray < stats <player> | test <player> [null] | trust [player] >
