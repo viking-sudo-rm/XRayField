@@ -1,5 +1,6 @@
 package snorri.main;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,13 +21,6 @@ public class XRaySettings {
 		for (String id : getTrustedIds()) {
 			OfflinePlayer player = XRayField.getPlayer(UUID.fromString(id));
 			result.load(DataManager.getAllData(player));
-			/*
-			try {
-				result.loadLog(player);
-			} catch (IOException e) { }
-			if (player.isOnline())
-				result.load(DataManager.getCurrentSession(player.getPlayer()));
-			*/
 		}
 		return result;
 	}
@@ -60,6 +54,19 @@ public class XRaySettings {
 			}
 		}
 		config.set("trusted", trustedIds);
+	}
+
+	public static ArrayList<String> getTrustedNames() {
+		
+		//SIGH: if only java had generators :/
+		//implementing an iterator here would be too tedious
+		
+		ArrayList<String> result = new ArrayList<String>();
+		for (String id : getTrustedIds()) {
+			result.add(XRayField.getPlayer(UUID.fromString(id)).getName());
+		}
+		
+		return result;
 	}
 		
 }

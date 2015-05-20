@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -79,14 +80,22 @@ public class DataSet extends ArrayList<Double> {
 	
 	public double tTest(double mu) {
 		TTest test = new TTest();
-		double pvalue = 2 * test.tTest(mu, toPrimitiveArray());
-		return (mean() > mu) ? pvalue : 1;
+		try {
+			double pvalue = 2 * test.tTest(mu, toPrimitiveArray());
+			return (mean() > mu) ? pvalue : 1;
+		} catch (NumberIsTooSmallException e) {
+			return 10d;
+		}
 	}
 	
 	public double tTest(DataSet other) {
 		TTest test = new TTest();
-		double pvalue = 2 * test.tTest(toPrimitiveArray(), other.toPrimitiveArray());
-		return (mean() - other.mean() > 0) ? pvalue : 1;
+		try {
+			double pvalue = 2 * test.tTest(toPrimitiveArray(), other.toPrimitiveArray());
+			return (mean() - other.mean() > 0) ? pvalue : 1;
+		} catch (NumberIsTooSmallException e) {
+			return 10d;
+		}
 	}
 	
 	private double[] toPrimitiveArray() {

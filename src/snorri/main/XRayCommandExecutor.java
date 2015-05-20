@@ -59,19 +59,32 @@ public class XRayCommandExecutor implements CommandExecutor {
 		args = getArgs(args);
 		if (cmd.getName().equals("xray")) {
 			
-			if (args.length < 2)
-				return false;
-			
-			OfflinePlayer player = XRayField.getPlayer(args[1]);
-			if (player == null)
-				return false;
-			
-			
-			DataSet data = getData(player, flags);
-			String playerName = getPlayerName(player);
+			OfflinePlayer player = null;
+			DataSet data = null;
+			String playerName = null;
+			if (args.length < 2) {
+				if (! args[0].equals("trust"))
+					return false;
+			}
+			else {
+				player = XRayField.getPlayer(args[1]);
+				if (player == null)
+					return false;
+				
+				
+				data = getData(player, flags);
+				playerName = getPlayerName(player);
+			}
 			
 			if (args[0].equals("stats")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Power Statistics: ");
+				
+				//TODO: generalize this?
+				if (sender instanceof Player && ! XRayPerms.canAccessData((Player) sender)) {
+					sender.sendMessage(ChatColor.RED + "You do not have permission to access mining data");
+					return true;
+				}
+				
+				sender.sendMessage(ChatColor.DARK_GREEN + "Power Statistics:");
 				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
 				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + data.getMode().toString());
 				sender.sendMessage(ChatColor.GOLD + "  Mean: " + ChatColor.RESET + data.mean());
@@ -81,13 +94,25 @@ public class XRayCommandExecutor implements CommandExecutor {
 			}
 			
 			if (args[0].equals("test")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "X-Ray Test: ");
+				
+				if (sender instanceof Player && ! XRayPerms.canAccessData((Player) sender)) {
+					sender.sendMessage(ChatColor.RED + "You do not have permission to access mining data");
+					return true;
+				}
+				
+				sender.sendMessage(ChatColor.DARK_GREEN + "X-Ray Test:");
 				sender.sendMessage(ChatColor.GREEN + "  Player: " + ChatColor.RESET + playerName);
 				if (args.length == 2)
 					sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.GRAY + ChatColor.ITALIC + "trusted");
 				else
 					sender.sendMessage(ChatColor.GREEN + "  Against: " + ChatColor.RESET + getPlayerName(XRayField.getPlayer(args[2])));
 				sender.sendMessage(ChatColor.GREEN + "  Type: " + ChatColor.GRAY + ChatColor.ITALIC + data.getMode().toString());
+				
+				if (args.length == 2 && XRaySettings.getTrustedData().size() == 0) {
+					sender.sendMessage(ChatColor.RED + "  There is no trusted mining data to compare against");
+					sender.sendMessage(ChatColor.GREEN + "  Manually set a null with " + ChatColor.RED + "/xray test " + ChatColor.RESET + playerName + ChatColor.RED + " <null>");
+					return true;
+				}
 				
 				double pvalue;
 				try {
@@ -97,6 +122,11 @@ public class XRayCommandExecutor implements CommandExecutor {
 					pvalue = data.tTest(otherData);
 				}
 				
+				if (pvalue == 10d) {
+					sender.sendMessage(ChatColor.RED + "  There is not sufficient data to perform this test");
+					return true;
+				}
+				
 				sender.sendMessage(ChatColor.GOLD + "  P-Value: " + ChatColor.RESET + pvalue);
 				sender.sendMessage(ChatColor.GOLD + "  Score: " + ChatColor.RESET + -Math.log10(pvalue));
 				return true;
@@ -104,7 +134,25 @@ public class XRayCommandExecutor implements CommandExecutor {
 			
 			if (args[0].equals("trust")) {
 				
+				if (sender instanceof Player && ! XRayPerms.canGiveTrust((Player) sender)) {
+					sender.sendMessage(ChatColor.RED + "You do not have permission to change trusted miner status");
+					return true;
+				}
+				
 				//TODO: make /xray trust show who is trusted
+				if (args.length == 1) {
+					sender.sendMessage(ChatColor.DARK_GREEN + "Trusted Miners:");
+					boolean noOne = true;
+					for (String name : XRaySettings.getTrustedNames()) {
+						noOne = false;
+						sender.sendMessage("  " + name);
+					}
+					if (noOne) {
+						sender.sendMessage("" + ChatColor.GRAY + ChatColor.ITALIC + "  none");
+						sender.sendMessage(ChatColor.GREEN + "Use " + ChatColor.RED  + "/xray trust <player>" + ChatColor.GREEN + " to add some");
+					}
+					return true;
+				}
 				
 				if (XRaySettings.isTrusted(XRayField.getPlayer(playerName))) {
 					
