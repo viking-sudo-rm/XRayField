@@ -9,8 +9,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import snorri.data.DataManager;
 import snorri.data.DataSet;
+import snorri.scan.ScanResult;
+import snorri.scan.XRayScan;
 
 public class XRayCommandExecutor implements CommandExecutor {
 
@@ -39,29 +40,53 @@ public class XRayCommandExecutor implements CommandExecutor {
 		return (String[]) result.toArray(args);
 	}
 	
-	private DataSet getData(OfflinePlayer player, String flags) {
-		if (flags.contains("a")) {
-			return DataManager.getOfflineData(player);
-		}
-		if (flags.contains("s")) {
-			return DataManager.getCurrentSession((Player) player);
-		}
-		return DataManager.getAllData(player);
-	}
-	
 	private String getPlayerName(OfflinePlayer player) {
 		return player.isOnline() ? ((Player) player).getDisplayName() : player.getName();
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		
 		String flags = getFlags(args);
 		args = getArgs(args);
+		
 		if (cmd.getName().equals("xray")) {
+			
+			XRayScan scan = new XRayScan(flags);
+			
+			if (args[0].equals("scan")) {
+				
+				if (sender instanceof Player && ! XRayPerms.canAccessData((Player) sender)) {
+					sender.sendMessage(ChatColor.RED + "You do not have permission to access mining data");
+					return true;
+				}
+				
+				ArrayList<ScanResult> results;
+				if (args.length == 2)
+					results = scan.checkPlayers(Double.parseDouble(args[1]));
+				else
+					results = scan.checkPlayers();
+								
+				sender.sendMessage(ChatColor.DARK_GREEN + "Top Suspects:");
+				if (results.size() == 0)
+					sender.sendMessage(ChatColor.GRAY + "  " + ChatColor.ITALIC + "none");
+				else {
+					double pvalue;
+					ChatColor suspicion;
+					for (int i = 0; i < results.size() && i < 5; i++) {
+						pvalue = results.get(i).pvalue;
+						suspicion = (pvalue < XRaySettings.ALPHA) ? ChatColor.RED : ChatColor.GREEN;
+						sender.sendMessage("  " + ChatColor.GOLD + (i + 1) + ". " + ChatColor.RESET + getPlayerName(results.get(i).player) + "  " + suspicion + pvalue);
+					}
+				}
+				
+				return true;
+			}
 			
 			OfflinePlayer player = null;
 			DataSet data = null;
 			String playerName = null;
+			
 			if (args.length < 2) {
 				if (! args[0].equals("trust"))
 					return false;
@@ -72,7 +97,7 @@ public class XRayCommandExecutor implements CommandExecutor {
 					return false;
 				
 				
-				data = getData(player, flags);
+				data = scan.getData(player);
 				playerName = getPlayerName(player);
 			}
 			
@@ -90,6 +115,7 @@ public class XRayCommandExecutor implements CommandExecutor {
 				sender.sendMessage(ChatColor.GOLD + "  Mean: " + ChatColor.RESET + data.mean());
 				sender.sendMessage(ChatColor.GOLD + "  SD: " + ChatColor.RESET + data.sd());
 				sender.sendMessage(ChatColor.GOLD + "  Sample: " + ChatColor.RESET + data.size());
+				
 				return true;
 			}
 			
@@ -114,12 +140,12 @@ public class XRayCommandExecutor implements CommandExecutor {
 					return true;
 				}
 				
+				//TODO: have "score" feature inside the scan class
 				double pvalue;
 				try {
-					pvalue = data.tTest(Double.parseDouble(args[2]));
+					pvalue = scan.checkPlayer(player, Double.parseDouble(args[2])).pvalue;
 				} catch (Exception e) {
-					DataSet otherData = (args.length == 2) ? XRaySettings.getTrustedData() : getData(XRayField.getPlayer(args[2]), flags);
-					pvalue = data.tTest(otherData);
+					pvalue = ((args.length == 2) ? scan.checkPlayer(player) : scan.checkPlayer(player, XRayField.getPlayer(args[2]))).pvalue;
 				}
 				
 				if (pvalue == 10d) {
@@ -139,7 +165,6 @@ public class XRayCommandExecutor implements CommandExecutor {
 					return true;
 				}
 				
-				//TODO: make /xray trust show who is trusted
 				if (args.length == 1) {
 					sender.sendMessage(ChatColor.DARK_GREEN + "Trusted Miners:");
 					boolean noOne = true;
@@ -166,6 +191,7 @@ public class XRayCommandExecutor implements CommandExecutor {
 					sender.sendMessage(ChatColor.GREEN + "Revoke that status with " + ChatColor.RED + "/xray -r trust " + playerName);
 					return true;
 				}
+				
 				XRaySettings.addTrusted(XRayField.getPlayer(playerName));
 				sender.sendMessage(ChatColor.RESET + playerName + ChatColor.GREEN + " is now a trusted miner");
 				return true;

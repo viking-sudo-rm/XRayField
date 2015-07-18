@@ -1,1 +1,9 @@
 trusted: []
+alphas:
+  warn: -1
+  alert: 0.01
+  ban: -1
+sources:
+  56:
+    flux: 1
+    ceiling: 16

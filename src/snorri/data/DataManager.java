@@ -2,6 +2,7 @@ package snorri.data;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -9,7 +10,9 @@ import org.bukkit.entity.Player;
 import snorri.main.XRayField;
 
 public class DataManager {
-
+	
+	//TODO: make a different data manager for each type
+	
 	private static HashMap<Player, DataSet> workData;
 	//private static HashMap<Player, StatTracker> stats;
 		
@@ -103,6 +106,10 @@ public class DataManager {
 			data.loadLog(player);
 		} catch (IOException e) { }
 		return data;
+	}
+	
+	public static Set<Player> getOnlinePlayers() {
+		return workData.keySet();
 	}
 	
 }

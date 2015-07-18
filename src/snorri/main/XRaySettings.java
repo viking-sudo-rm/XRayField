@@ -14,6 +14,8 @@ import snorri.data.DataSet;
 public class XRaySettings {
 
 	private static FileConfiguration config;
+	
+	public static double ALPHA = 0.01;
 
 	public static DataSet getTrustedData() {
 		DataSet result = new DataSet();
@@ -31,7 +33,6 @@ public class XRaySettings {
 	
 	public static void setConfig(FileConfiguration c) {
 		config = c;
-		//XRayField.log("" + getTrustedIds().size());
 	}
 	
 	public static boolean isTrusted(OfflinePlayer player) {

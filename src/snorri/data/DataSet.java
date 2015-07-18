@@ -40,8 +40,16 @@ public class DataSet extends ArrayList<Double> {
 			
 			BufferedReader fh = new BufferedReader(new FileReader(log));
 			
-			while (fh.ready())
-				add(Double.parseDouble(fh.readLine()));
+			String line;
+			while (fh.ready()) {
+				line = fh.readLine();
+				try {
+					add(Double.parseDouble(line));
+				}
+				catch (NumberFormatException e) {
+					XRayField.log("Could not parse corrupted line in log file for player " + player.getUniqueId().toString() + ": " + line);
+				}
+			}
 			fh.close();
 			
 		}
