@@ -15,7 +15,8 @@ public class XRaySettings {
 
 	private static FileConfiguration config;
 	
-	public static double ALPHA = 0.01;
+	//TODO: add thing for getting different blocks
+	//      and their flux and ceiling
 
 	public static DataSet getTrustedData() {
 		DataSet result = new DataSet();
@@ -33,6 +34,30 @@ public class XRaySettings {
 	
 	public static void setConfig(FileConfiguration c) {
 		config = c;
+	}
+	
+	public static double getAlpha(String tag) {
+		return config.getDouble("alphas." + tag);
+	}
+	
+	public static void setAlpha(String tag, double alpha) {
+		config.set("alphas." + tag, alpha);
+	}
+	
+	public static Iterable<String> getSourceBlocks() {
+		return config.getConfigurationSection("sources").getKeys(false);
+	}
+	
+	public static double getFlux(String blockName) {
+		return config.getDouble("sources." + blockName + ".flux");
+	}
+	
+	public static int getCeiling(String blockName) {
+		return config.getInt("sources." + blockName + ".ceiling");
+	}
+	
+	public static int getSearchRange() {
+		return config.getInt("range");
 	}
 	
 	public static boolean isTrusted(OfflinePlayer player) {

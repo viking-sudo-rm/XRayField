@@ -1,9 +1,10 @@
 trusted: []
+range: 5
 alphas:
   warn: -1
   alert: 0.01
   ban: -1
 sources:
-  56:
+  DIAMOND_ORE:
     flux: 1
     ceiling: 16

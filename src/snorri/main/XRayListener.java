@@ -16,10 +16,7 @@ import snorri.math.Mathv;
 
 public class XRayListener implements Listener {
 
-	private static final int RANGE = 5;
-	private static final int CEILING = 16;
 	private static final int FLOOR = -1;
-	private static final Material TREASURE = Material.DIAMOND_ORE;
 	
 	//TODO: move center of field to center of block
 	
@@ -30,16 +27,19 @@ public class XRayListener implements Listener {
 		World world = player.getWorld();
 		Location loc = event.getFrom();
 		
-		//Vector direction = loc.getDirection();
+		int range = XRaySettings.getSearchRange();
 		
 		Vector netForce = new Vector(0, 0, 0);
-		for (int y = loc.getBlockY() - RANGE; y < loc.getBlockY() + RANGE && y < CEILING; y++) {
-			if (y < FLOOR)
-				continue;
-			for (int x = loc.getBlockX() - RANGE; x < loc.getBlockX() + RANGE; x++) {
-				for (int z = loc.getBlockZ() - RANGE; z < loc.getBlockZ() + RANGE; z++) {
-					if (world.getBlockAt(x, y, z).getType().equals(TREASURE)) {
-						netForce.add(Mathv.getForceOn(new Vector(loc.getX(), loc.getY(), loc.getZ()), new Vector(x, y , z)));
+		
+		for (String blockType : XRaySettings.getSourceBlocks()) {
+			for (int y = loc.getBlockY() - range; y < loc.getBlockY() + range && y < XRaySettings.getCeiling(blockType); y++) {
+				if (y < FLOOR)
+					continue;
+				for (int x = loc.getBlockX() - range; x < loc.getBlockX() + range; x++) {
+					for (int z = loc.getBlockZ() - range; z < loc.getBlockZ() + range; z++) {
+						if (world.getBlockAt(x, y, z).getType().equals(Material.getMaterial(blockType))) {
+							netForce.add(Mathv.getForceOn(new Vector(loc.getX(), loc.getY(), loc.getZ()), new Vector(x, y , z), XRaySettings.getFlux(blockType)));
+						}
 					}
 				}
 			}
@@ -49,10 +49,6 @@ public class XRayListener implements Listener {
 			return;
 		
 		DataManager.updateStats(player, Mathv.getWorkTerm(netForce, player.getVelocity()));
-		
-		//double theta = Mathv.getAngleBetween(direction, netForce);
-		//player.sendMessage("" + 180 / Math.PI * theta);
-		//DataManager.writeToDisk(player);
 		
 	}
 	

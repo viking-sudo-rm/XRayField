@@ -75,7 +75,7 @@ public class XRayCommandExecutor implements CommandExecutor {
 					ChatColor suspicion;
 					for (int i = 0; i < results.size() && i < 5; i++) {
 						pvalue = results.get(i).pvalue;
-						suspicion = (pvalue < XRaySettings.ALPHA) ? ChatColor.RED : ChatColor.GREEN;
+						suspicion = (pvalue < XRaySettings.getAlpha("alert")) ? ChatColor.RED : ChatColor.GREEN;
 						sender.sendMessage("  " + ChatColor.GOLD + (i + 1) + ". " + ChatColor.RESET + getPlayerName(results.get(i).player) + "  " + suspicion + pvalue);
 					}
 				}
