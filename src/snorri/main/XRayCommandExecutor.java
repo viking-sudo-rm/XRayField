@@ -54,6 +54,9 @@ public class XRayCommandExecutor implements CommandExecutor {
 			
 			XRayScan scan = new XRayScan(flags);
 			
+			if (args.length == 0)
+				return false;
+			
 			if (args[0].equals("scan")) {
 				
 				if (sender instanceof Player && ! XRayPerms.canAccessData((Player) sender)) {

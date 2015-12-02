@@ -14,9 +14,6 @@ import snorri.data.DataSet;
 public class XRaySettings {
 
 	private static FileConfiguration config;
-	
-	//TODO: add thing for getting different blocks
-	//      and their flux and ceiling
 
 	public static DataSet getTrustedData() {
 		DataSet result = new DataSet();
@@ -83,10 +80,7 @@ public class XRaySettings {
 	}
 
 	public static ArrayList<String> getTrustedNames() {
-		
-		//SIGH: if only java had generators :/
-		//implementing an iterator here would be too tedious
-		
+				
 		ArrayList<String> result = new ArrayList<String>();
 		for (String id : getTrustedIds()) {
 			result.add(XRayField.getPlayer(UUID.fromString(id)).getName());

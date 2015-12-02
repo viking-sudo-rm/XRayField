@@ -29,9 +29,6 @@ public class XRayScan {
 	public Iterable<OfflinePlayer> getAllPlayers() {
 		
 		Set<Player> playerSet = DataManager.getOnlinePlayers();
-		//ArrayList<OfflinePlayer> onlinePlayers = new ArrayList<OfflinePlayer>();
-		//for (Player p : playerSet)
-		//	onlinePlayers.add((OfflinePlayer) p);
 		
 		if (flags.contains("s"))
 			return new ArrayList<OfflinePlayer>(playerSet);
